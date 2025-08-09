@@ -3,15 +3,13 @@ import { npmSearchGenerator } from "./npm";
 const completionSpec: Fig.Spec = {
   name: "nun",
   description: "Uninstall dependencies with the correct agent",
-  args: [
-    {
+  args: {
       name: "packages",
       description: "Packages to remove (omit to enter interactive mode)",
       isOptional: true,
       isVariadic: true,
       generators: npmSearchGenerator,
-    }
-  ],
+    },
   options: [
     {
       name: "-m",
@@ -33,24 +31,6 @@ const completionSpec: Fig.Spec = {
     {
       name: ["-v", "--version"],
       description: "Show version",
-    },
-  ],
-  examples: [
-    {
-      name: "Remove a dependency",
-      example: "nun webpack",
-    },
-    {
-      name: "Interactive removal",
-      example: "nun",
-    },
-    {
-      name: "Interactive multi-remove",
-      example: "nun -m",
-    },
-    {
-      name: "Uninstall a global package",
-      example: "nun -g silent",
     },
   ],
 };

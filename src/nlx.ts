@@ -3,28 +3,34 @@ import { npmSearchGenerator } from "./npm";
 import npxSpec, { npxSuggestions } from "./npx";
 import pnpxSpec from "./pnpx";
 
-/**
- * nlx: download & execute (npx / yarn dlx / pnpm dlx / bunx / deno run npm:)
- * We can't detect the agent from the completion side, so we compose
- * subcommands and options from the upstream specs (npx, bunx, pnpx)
- * to get rich argument completion for known executables.
- */
+// Helper to coerce a Fig.Spec into a Fig.Subcommand when possible
+const toSubcommand = (spec: Fig.Spec): Fig.Subcommand | null => {
+  if (typeof spec === "function") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = (spec as any)();
+    if (res && typeof res === "object" && "versionedSpecPath" in res)
+      return null;
+    return res as Fig.Subcommand;
+  }
+  return spec as Fig.Subcommand;
+};
+
+const npxCmd = toSubcommand(npxSpec);
+const bunxCmd = toSubcommand(bunxSpec);
+const pnpxCmd = toSubcommand(pnpxSpec);
 
 const mergedSubcommands: Fig.Subcommand[] = [
-  ...(npxSpec.subcommands ?? []),
-  ...(bunxSpec.subcommands ?? []),
-  ...(pnpxSpec.subcommands ?? []),
+  ...(npxCmd?.subcommands ?? []),
+  ...(bunxCmd?.subcommands ?? []),
+  ...(pnpxCmd?.subcommands ?? []),
 ];
 
-// Merge a minimal option set that is common/safe across invocations.
-// (Avoid agent-specific flags that might not apply across all.)
 const mergedOptions: Fig.Option[] = [
-  ...(npxSpec.options ?? []),
-  ...(bunxSpec.options ?? []),
-  ...(pnpxSpec.options ?? []),
+  ...(npxCmd?.options ?? []),
+  ...(bunxCmd?.options ?? []),
+  ...(pnpxCmd?.options ?? []),
 ].filter((opt, idx, arr) => {
   const key = Array.isArray(opt.name) ? opt.name.join("|") : String(opt.name);
-  // de-duplicate by "name" signature
   return (
     idx ===
     arr.findIndex((o) => {
@@ -37,8 +43,6 @@ const mergedOptions: Fig.Option[] = [
 const completionSpec: Fig.Spec = {
   name: "nlx",
   description: "Download & execute a package binary with the correct agent",
-  // Known commands get full arg/option completion via subcommands;
-  // Unknown packages still get npm search suggestions via args below.
   subcommands: mergedSubcommands,
   args: [
     {
@@ -46,7 +50,7 @@ const completionSpec: Fig.Spec = {
       description: "Package name (and optional subcommand) to execute",
       isOptional: true,
       generators: npmSearchGenerator,
-      suggestions: npxSuggestions, // reuse curated list from npx
+      suggestions: npxSuggestions,
     },
     {
       name: "args",
@@ -56,9 +60,7 @@ const completionSpec: Fig.Spec = {
     },
   ],
   options: [
-    // a lightweight, deduped union
     ...mergedOptions,
-    // global utility flags (safe across agents)
     {
       name: "-C",
       description: "Change directory before running the command",

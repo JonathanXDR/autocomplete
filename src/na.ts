@@ -1,6 +1,7 @@
 const completionSpec: Fig.Spec = {
   name: "na",
-  description: "Agent alias: run agent-specific commands directly (npm/yarn/pnpm/bun/deno)",
+  description:
+    "Agent alias: run agent-specific commands directly (npm/yarn/pnpm/bun/deno)",
   args: [
     {
       name: "subcommand",
@@ -27,12 +28,6 @@ const completionSpec: Fig.Spec = {
     {
       name: ["-v", "--version"],
       description: "Show version",
-    },
-  ],
-  examples: [
-    {
-      name: "Run a task with the detected agent",
-      example: "na run foo",
     },
   ],
 };

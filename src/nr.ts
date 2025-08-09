@@ -1,4 +1,4 @@
-import { npmSearchGenerator, npmScriptsGenerator } from "./npm";
+import { npmScriptsGenerator } from "./npm";
 
 const completionSpec: Fig.Spec = {
   name: "nr",
@@ -16,7 +16,7 @@ const completionSpec: Fig.Spec = {
       description: "Arguments passed to the script",
       isOptional: true,
       isVariadic: true,
-    }
+    },
   ],
   options: [
     {
@@ -46,20 +46,6 @@ const completionSpec: Fig.Spec = {
     {
       name: ["-v", "--version"],
       description: "Show version",
-    },
-  ],
-  examples: [
-    {
-      name: "Run a script and pass args",
-      example: "nr dev --port=3000",
-    },
-    {
-      name: "Interactive script picker",
-      example: "nr",
-    },
-    {
-      name: "Rerun the last script",
-      example: "nr -",
     },
   ],
 };

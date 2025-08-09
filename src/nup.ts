@@ -4,7 +4,8 @@ const completionSpec: Fig.Spec = {
   options: [
     {
       name: ["-i", "--interactive"],
-      description: "Interactive upgrade (Yarn Berry: up -i, Yarn 1: upgrade-interactive, pnpm: update -i)",
+      description:
+        "Interactive upgrade (Yarn Berry: up -i, Yarn 1: upgrade-interactive, pnpm: update -i)",
     },
     {
       name: "-C",
@@ -18,16 +19,6 @@ const completionSpec: Fig.Spec = {
     {
       name: ["-v", "--version"],
       description: "Show version",
-    },
-  ],
-  examples: [
-    {
-      name: "Upgrade dependencies",
-      example: "nup",
-    },
-    {
-      name: "Interactive upgrades (where supported)",
-      example: "nup -i",
     },
   ],
 };
