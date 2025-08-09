@@ -1,29 +1,67 @@
-import { npmScriptsGenerator } from "./npm";
+import { npmSearchGenerator, npmScriptsGenerator } from "./npm";
 
 const completionSpec: Fig.Spec = {
   name: "nr",
-  description: "Use the right package manager - run",
+  description: "Run package.json scripts with the correct agent",
+  args: [
+    {
+      name: "script",
+      description: "The script name from package.json",
+      isOptional: true,
+      generators: npmScriptsGenerator,
+      debounce: true,
+    },
+    {
+      name: "scriptArgs",
+      description: "Arguments passed to the script",
+      isOptional: true,
+      isVariadic: true,
+    }
+  ],
   options: [
     {
+      name: "-",
+      description: "Rerun the last command",
+      priority: 60,
+    },
+    {
+      name: "--completion-bash",
+      description: "Print bash completion script",
+      priority: 49,
+    },
+    {
+      name: "--completion-zsh",
+      description: "Print zsh completion script",
+      priority: 49,
+    },
+    {
+      name: "-C",
+      description: "Change directory before running the command",
+      args: { name: "path", template: "folders" },
+    },
+    {
       name: ["-h", "--help"],
-      description: "Output usage information",
+      description: "Show help",
+    },
+    {
+      name: ["-v", "--version"],
+      description: "Show version",
     },
   ],
-  args: {
-    name: "script",
-    description: "The script to run",
-    filterStrategy: "fuzzy",
-    generators: npmScriptsGenerator,
-  },
-  additionalSuggestions: [
+  examples: [
     {
-      name: "-",
-      // Run the suggestion directory on insert
-      // eslint-disable-next-line @withfig/fig-linter/no-useless-insertvalue
-      insertValue: "-\n",
-      description: "Run the last command",
-      type: "shortcut",
+      name: "Run a script and pass args",
+      example: "nr dev --port=3000",
+    },
+    {
+      name: "Interactive script picker",
+      example: "nr",
+    },
+    {
+      name: "Rerun the last script",
+      example: "nr -",
     },
   ],
 };
+
 export default completionSpec;
